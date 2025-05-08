@@ -8,7 +8,8 @@ const initialState = {
     withdraw: '',
     requestLoan: 5000,
     transaction: [],
-    error: null
+    error: null,
+    openHistory: false 
     // payLoan: null,
     // closeAccount: null
 };
@@ -29,7 +30,7 @@ function reducer (state, action) {
         case 'deposit': 
             return {
                 ...state, balance: state.balance + Number(state.deposit), deposit: '', 
-                transaction: [...state.transaction, {type: action.type, amount: Number(state.deposit), date: new Date() }]
+                transaction: [...state.transaction, {type: action.type, amount: Number(state.deposit), balance: state.balance + Number(state.deposit), date: new Date() }]
             }
         case 'SET_WITHDRAW': 
             return {
@@ -38,7 +39,7 @@ function reducer (state, action) {
         case 'withdraw': 
             return {
                 ...state, balance: state.balance - Number(state.withdraw), withdraw: '',
-                transaction: [...state.transaction, {type: action.type, amount: Number(state.withdraw), date: new Date() }]
+                transaction: [...state.transaction, {type: action.type, amount: Number(state.withdraw), balance: state.balance - Number(state.withdraw), date: new Date() }]
             }
         case 'loan':
             const check = state.loan === HIGHEST_LOAN__AMOUNT;
@@ -49,7 +50,7 @@ function reducer (state, action) {
             }
             return {
                 ...state, loan: action.payload,  balance: state.loan < HIGHEST_LOAN__AMOUNT ?  state.balance + state.requestLoan : state.balance,
-                transaction: [...state.transaction, {type: action.type, amount: Number(action.payload), date: new Date() }] 
+                transaction: [...state.transaction, {type: action.type, amount: Number(action.payload), balance: state.balance + Number(action.payload), date: new Date() }] 
             }
         case 'payloan': 
             const checkOutstanding = state.loan;
@@ -60,11 +61,15 @@ function reducer (state, action) {
             }
             return {
                 ...state, balance: state.balance - state.loan, loan: state.loan !== 0 ? state.loan - HIGHEST_LOAN__AMOUNT : 0,
-                transaction: [...state.transaction, {type: action.type, amount: Number(state.loan), date: new Date() }]
+                transaction: [...state.transaction, {type: action.type, amount: Number(state.loan), balance: state.balance -  Number(state.loan), date: new Date() }]
             }
         case 'closeAccount': 
             return {
                 ...state, isActive: state.balance === 0 && state.loan === 0 ? true : false
+            }
+        case 'openHistory': 
+            return {
+                ...state, openHistory: action.payload
             }
         default: 
             throw new Error('action not match')
@@ -76,7 +81,7 @@ function reducer (state, action) {
 function App() {
 
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {balance, loan, isActive, deposit, withdraw, requestLoan, transaction} = state
+    const {balance, loan, isActive, deposit, withdraw, requestLoan, transaction, openHistory} = state
 
     console.log(transaction)
 
@@ -179,6 +184,26 @@ function App() {
                     Close account
                 </button>
             </p>
+
+            <button onClick={() => dispatch({type: 'openHistory', payload: !openHistory})}>{openHistory ? 'Close Transaction History' : 'View Transaction History'}</button>
+           { openHistory && <div>
+                <h1>Transaction History</h1>
+                { transaction.length === 0 ? (
+                    <p>No Transaction history yet</p>
+                ) :
+                    <ul>{transaction.map((eachTrans, index) => (
+                        <li key={index}>
+                            <div>
+                                <p>{eachTrans.type}</p>
+                                <span><strong>${eachTrans.amount}</strong></span>
+                                <span><strong>${eachTrans.balance}</strong></span>
+                                <span><em>{` ${eachTrans.date.toLocaleTimeString()} ${eachTrans.date.toDateString()}`}</em></span>
+                            </div>
+                        </li>
+                    ))}</ul>
+                }
+            </div>}
+
         </div>
 
     );

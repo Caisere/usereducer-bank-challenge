@@ -1,0 +1,51 @@
+.login {
+  /* margin: 2.5rem; */
+  padding: 2.5rem 5rem;
+  background-color: var(--color-dark--1);
+  min-height: calc(100vh);
+}
+
+.form {
+    background-color: var(--color-dark--2);
+    border-radius: 7px;
+    padding: 2rem 3rem;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    /* Different from other form */
+    /* width: 48rem; */
+    margin: 8rem auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 100%;
+}
+
+.row label {
+    color: var(--color-light--3);
+    font-size: 1rem;
+}
+
+.row input {
+    padding: .6rem;
+    outline: none;
+    width: 100%;
+    border: none;
+    font-size: 1rem;
+    border-radius: 4px;
+}
+
+.loginButton {
+    border: none;
+    background-color: var(--color-dark--0);
+    color: var(--color-brand--2);
+    padding: .8rem 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    border-radius: 6px;
+}
